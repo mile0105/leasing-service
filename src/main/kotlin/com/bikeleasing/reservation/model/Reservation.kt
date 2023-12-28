@@ -1,6 +1,7 @@
 package com.bikeleasing.reservation.model
 
 import com.bikeleasing.bike.model.Bike
+import com.bikeleasing.reservation.dto.ReservationDetailsDTO
 import com.bikeleasing.user.model.User
 import java.time.Instant
 import javax.persistence.Entity
@@ -27,4 +28,15 @@ data class Reservation(
     val owner: User,
     val validFrom: Instant,
     val validTo: Instant
-)
+) {
+
+    fun toReservationDetailsDTO(): ReservationDetailsDTO {
+        return ReservationDetailsDTO(
+            id = id,
+            bike = bike.toResponseDTO(),
+            owner = owner.fullName(),
+            validFrom = validFrom,
+            validTo = validTo
+        )
+    }
+}

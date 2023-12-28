@@ -15,6 +15,6 @@ class BikeleasingControllerAdvice {
             message = exception.getErrorMessage() ?: ""
         )
 
-        return ResponseEntity(message, exception.statusCode,)
+        return ResponseEntity(message, exception.statusCode)
     }
 }

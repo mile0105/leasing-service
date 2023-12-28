@@ -7,6 +7,7 @@ import com.bikeleasing.bike.repository.BikeRepository
 import com.bikeleasing.error.exceptions.NotFoundException
 import com.bikeleasing.error.exceptions.UnauthorizedException
 import com.bikeleasing.user.repository.UserRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,34 +31,24 @@ class BikeService(
 
         val dbBike = bikeRepository.save(bike)
 
-        return BikeResponseDTO(
-            make = dbBike.make,
-            model = dbBike.model,
-            ownedBy = loggedInUser.fullName()
-        )
+        return dbBike.toResponseDTO()
     }
 
     fun getBikesNotOwnedByUserIdAvailableForReservation(loggedInUserId: Long): List<BikeResponseDTO> {
-        return bikeRepository.getBikesNotOwnedByOwner(
-            loggedInUserId
+        val user = userRepository.findByIdOrNull(loggedInUserId)!!
+        return bikeRepository.getBikesOwnedByOwnerNot(
+            user
         ).map {
-            BikeResponseDTO(
-                make = it.make,
-                model = it.model,
-                ownedBy = it.owner.fullName()
-            )
+            it.toResponseDTO()
         }
     }
 
     fun getBikesOwnedByUserId(loggedInUserId: Long): List<BikeResponseDTO> {
+        val user = userRepository.findByIdOrNull(loggedInUserId)!!
         return bikeRepository.getBikesOwnedByOwner(
-            loggedInUserId
+            user
         ).map {
-            BikeResponseDTO(
-                make = it.make,
-                model = it.model,
-                ownedBy = it.owner.fullName()
-            )
+            it.toResponseDTO()
         }
     }
 
